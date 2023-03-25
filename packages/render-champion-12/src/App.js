@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 import { Go, Square } from "./components";
 import "./App.css";
@@ -13,10 +13,8 @@ function App() {
       <Context.Provider value={counter}>
         <Go onClick={() => setCounter((v) => v + 1)} />
         <Squares>
-          <Square>A</Square>
-          <Square>B</Square>
-          <Square>C</Square>
-          <Square>D</Square>
+          <LeftSquares />
+          <RightSquare />
         </Squares>
       </Context.Provider>
     </main>
@@ -25,6 +23,20 @@ function App() {
 
 function Squares({ children }) {
   return <div className="squares">{children}</div>;
+}
+
+function LeftSquares() {
+  return (
+    <>
+      <Square>A</Square>
+      <Square>B</Square>
+      <Square>C</Square>
+    </>
+  );
+}
+function RightSquare() {
+  const counter = useContext(Context);
+  return <Square counter={counter}>D</Square>;
 }
 
 export default App;
