@@ -57,7 +57,7 @@ async function seed() {
       correct: 10,
       seconds: 30,
       explanation:
-        "Functions and objects create inline in a component, will be recreated on every render, so even though they looksidentical on every render, they aren't",
+        "Functions and objects created inline in a component, will be recreated on every render, so even though they looksidentical on every render, they aren't",
     },
     {
       round: 8,
