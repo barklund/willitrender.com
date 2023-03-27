@@ -42,15 +42,15 @@ export async function action({ params, request }: ActionArgs) {
   switch (action) {
     case "start":
       const newRound = await startRound(params.session!);
-      sendRound(newRound.session.shortcode, newRound);
+      await sendRound(newRound.session.shortcode, newRound);
       return json({ round: newRound });
     case "end":
       const endedRound = await endRound(String(body.get("roundId")));
-      sendRound(endedRound.session.shortcode, endedRound);
+      await sendRound(endedRound.session.shortcode, endedRound);
       return json({ round: endedRound });
     case "score":
       const scoredRound = await scoreRound(String(body.get("roundId")));
-      sendRound(scoredRound.session.shortcode, scoredRound);
+      await sendRound(scoredRound.session.shortcode, scoredRound);
       return json({ round: scoredRound });
     default:
       return json({ error: `unknown action: "${action}"` });

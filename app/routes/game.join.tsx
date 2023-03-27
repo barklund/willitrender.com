@@ -25,7 +25,7 @@ export async function action({ request }: ActionArgs) {
     seniority,
     shortcode,
   });
-  sendJoin(shortcode, participant);
+  await sendJoin(shortcode, participant);
   return redirect(`/game/guess/${participant.session.id}/${participant.id}`);
 }
 

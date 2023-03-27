@@ -32,7 +32,7 @@ export async function action({ params, request }: ActionArgs) {
   const participantId = String(params.participant);
   const answer = parseInt(String(body.get("answer")));
   const newGuess = await guess({ roundId, participantId, answer });
-  sendGuess(newGuess.participant.session.shortcode, newGuess);
+  await sendGuess(newGuess.participant.session.shortcode, newGuess);
   return json({ guess: newGuess });
 }
 

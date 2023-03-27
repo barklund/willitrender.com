@@ -10,13 +10,13 @@ const pusher = new Pusher({
 });
 
 export function sendGuess(shortcode: Session["shortcode"], data: Guess) {
-  pusher.trigger(shortcode, "guess", { data });
+  return pusher.trigger(shortcode, "guess", { data });
 }
 
 export function sendRound(shortcode: Session["shortcode"], data: Round) {
-  pusher.trigger(shortcode, "round", { data });
+  return pusher.trigger(shortcode, "round", { data });
 }
 
 export function sendJoin(shortcode: Session["shortcode"], data: Participant) {
-  pusher.trigger(shortcode, "join", { data });
+  return pusher.trigger(shortcode, "join", { data });
 }
