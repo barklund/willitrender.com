@@ -22,8 +22,7 @@ function build(sourceFolder) {
 
   // The archive to proper zip
   const archivePath = getFolder("zips", `${projectName}.zip`);
-  const gitFolder = `packages/${projectName}/src/`;
-  cp.execSync(`git archive -o ${archivePath} HEAD:${gitFolder}`, {
+  cp.execSync(`git archive -o ${archivePath} HEAD ./src`, {
     cwd: sourceFolder,
   });
 

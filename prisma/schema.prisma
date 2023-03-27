@@ -1,0 +1,86 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Game {
+  id String @id @default(cuid())
+
+  name   String
+  rounds Int
+
+  sessions  Session[]
+  exercises Exercise[]
+}
+
+model Exercise {
+  id String @id @default(cuid())
+
+  round       Int
+  repoName    String
+  seconds     Int
+  correct     Int
+  explanation String
+
+  game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  gameId String
+}
+
+model Session {
+  id String @id @default(cuid())
+
+  shortcode String
+
+  createdAt DateTime @default(now())
+
+  game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  gameId String
+
+  participants Participant[]
+  rounds       Round[]
+}
+
+model Round {
+  id String @id @default(cuid())
+
+  round     Int
+  isActive  Boolean  @default(true)
+  correct   Int?
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  sessionId String
+
+  guesses Guess[]
+}
+
+model Participant {
+  id String @id @default(cuid())
+
+  nickname  String
+  emoji     String
+  seniority Int
+  score     Int    @default(0)
+
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  sessionId String
+
+  guesses Guess[]
+}
+
+model Guess {
+  id String @id @default(cuid())
+
+  answer Int
+
+  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  participantId String
+
+  round   Round  @relation(fields: [roundId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  roundId String
+}
