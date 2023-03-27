@@ -177,7 +177,6 @@ async function seed() {
       prisma.exercise.create({ data: { ...exercise, gameId: game.id } })
     )
   );
-
   console.log(`Database has been seeded. 🌱`);
 }
 
