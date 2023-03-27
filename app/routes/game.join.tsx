@@ -3,7 +3,7 @@ import type { ActionArgs } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { joinSession } from "~/models/session.server";
-import { emitter } from "~/services/emitter.server";
+import { sendJoin } from "~/services/pusher.server";
 
 export async function action({ request }: ActionArgs) {
   const body = await request.formData();
@@ -25,7 +25,7 @@ export async function action({ request }: ActionArgs) {
     seniority,
     shortcode,
   });
-  emitter.emit("join", participant);
+  sendJoin(shortcode, participant);
   return redirect(`/game/guess/${participant.session.id}/${participant.id}`);
 }
 

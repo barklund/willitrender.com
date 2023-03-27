@@ -1,13 +1,10 @@
+import { PusherProvider } from "@harelpls/use-pusher";
 import { useLoaderData } from "@remix-run/react";
 import type { ActionArgs, LoaderArgs } from "@remix-run/server-runtime";
 import { redirect, json } from "@remix-run/server-runtime";
-import { useEffect, useState } from "react";
-import { useEventSource } from "remix-utils";
 import { getParticipantSession, guess } from "~/models/session.server";
-import { emitter } from "~/services/emitter.server";
-import Browser from "./browser";
-import CurrentGuess from "./currentGuess";
-import Rounds from "./rounds";
+import { sendGuess } from "~/services/pusher.server";
+import GuessProvider from "./guessProvider";
 
 export function links() {
   return [
@@ -25,7 +22,8 @@ export async function loader({ params }: LoaderArgs) {
     return redirect("/game/join");
   }
   const data = await getParticipantSession({ sessionId, participantId });
-  return json(data);
+  const pusherClientKey = process.env.PUSHER_CLIENT_KEY;
+  return json({ ...data, pusherClientKey });
 }
 
 export async function action({ params, request }: ActionArgs) {
@@ -34,45 +32,21 @@ export async function action({ params, request }: ActionArgs) {
   const participantId = String(params.participant);
   const answer = parseInt(String(body.get("answer")));
   const newGuess = await guess({ roundId, participantId, answer });
-  emitter.emit("guess", newGuess);
+  sendGuess(newGuess.participant.session.shortcode, newGuess);
   return json({ guess: newGuess });
 }
 
 export default function Guess() {
-  const { session, participant, rounds } = useLoaderData<typeof loader>();
-  const [gameRounds, setGameRounds] = useState(rounds);
-  const [currentRound, setCurrentRound] = useState(() => {
-    const lastRound = rounds[rounds.length - 1];
-    return lastRound?.isActive ? lastRound : null;
-  });
-  const latestRound = useEventSource("/sse/participant", { event: "round" });
-  useEffect(() => setGameRounds(rounds), [rounds]);
-  useEffect(() => {
-    if (latestRound) {
-      const parsedRound = JSON.parse(latestRound);
-      setCurrentRound(
-        parsedRound.isActive || parsedRound.correct === null
-          ? parsedRound
-          : null
-      );
-      setGameRounds((list) => [
-        ...list.filter(({ id }) => id !== parsedRound.id),
-        parsedRound,
-      ]);
-    }
-  }, [latestRound]);
+  const { session, participant, rounds, pusherClientKey } =
+    useLoaderData<typeof loader>();
+  const pusherConfig = { clientKey: pusherClientKey, cluster: "eu" };
   return (
-    <main className="flex h-full flex-col items-center gap-4">
-      <Rounds
+    <PusherProvider {...pusherConfig}>
+      <GuessProvider
+        session={session}
         participant={participant}
-        rounds={gameRounds}
-        roundCount={session.game.rounds}
+        rounds={rounds}
       />
-      {!currentRound && (
-        <h2 className="text-4xl">Please wait for next round...</h2>
-      )}
-      <Browser currentRound={currentRound} />
-      <CurrentGuess participant={participant} currentRound={currentRound} />
-    </main>
+    </PusherProvider>
   );
 }

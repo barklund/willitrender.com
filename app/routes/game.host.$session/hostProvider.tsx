@@ -1,9 +1,15 @@
 import type { PropsWithChildren } from "react";
+import { useCallback } from "react";
 import { useEffect, useState } from "react";
-import { useEventSource } from "remix-utils";
 
 import HostContext from "./hostContext";
-import type { GameRound, GameSession } from "~/models/types.client";
+import type {
+  GameGuess,
+  GameParticipant,
+  GameRound,
+  GameSession,
+} from "~/models/types.client";
+import { useChannel, useEvent } from "@harelpls/use-pusher";
 
 interface HostProviderProps {
   session: GameSession;
@@ -16,18 +22,19 @@ function HostProvider({
   const [participants, setParticipants] = useState(session.participants);
   const [rounds, setRounds] = useState(session.rounds);
   const [currentRound, setCurrentRound] = useState<GameRound | null>(null);
-  const lastParticipant = useEventSource("/sse/host", {
-    event: "join",
-  });
+  const channel = useChannel(session.shortcode);
+
+  const handleJoin = useCallback((message?: { data: GameParticipant }) => {
+    if (message) {
+      setParticipants((list) => list.concat([message.data]));
+    }
+  }, []);
+  useEvent(channel, "join", handleJoin);
+
   useEffect(() => {
     setParticipants(session.participants);
     setRounds(session.rounds);
   }, [session]);
-  useEffect(() => {
-    if (lastParticipant) {
-      setParticipants((list) => list.concat([JSON.parse(lastParticipant)]));
-    }
-  }, [lastParticipant]);
   useEffect(() => {
     if (!rounds.length || !rounds[rounds.length - 1].isActive) {
       setCurrentRound(null);
@@ -35,21 +42,20 @@ function HostProvider({
     }
     setCurrentRound(rounds[rounds.length - 1]);
   }, [rounds]);
-  const lastGuess = useEventSource("/sse/host", {
-    event: "guess",
-  });
-  useEffect(() => {
-    if (lastGuess) {
+
+  const handleGuess = useCallback((message?: { data: GameGuess }) => {
+    if (message) {
       setCurrentRound((curRound) => {
         if (!curRound) return null;
         const { guesses, ...rest } = curRound;
         return {
-          guesses: (guesses || []).concat([JSON.parse(lastGuess)]),
+          guesses: (guesses || []).concat([message.data]),
           ...rest,
         };
       });
     }
-  }, [lastGuess]);
+  }, []);
+  useEvent(channel, "guess", handleGuess);
 
   const value = {
     participants,

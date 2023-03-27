@@ -127,6 +127,16 @@ export async function startRound(sessionId: Session["id"]) {
   const expiresAt = new Date();
   expiresAt.setSeconds(expiresAt.getSeconds() + (exercise?.seconds || 60));
   return prisma.round.create({
+    select: {
+      correct: true,
+      id: true,
+      round: true,
+      isActive: true,
+      expiresAt: true,
+      createdAt: true,
+      sessionId: true,
+      session: { select: { shortcode: true } },
+    },
     data: {
       round: session.rounds.length + 1,
       expiresAt,
@@ -141,6 +151,9 @@ export async function guess({
   answer,
 }: Pick<Guess, "roundId" | "participantId" | "answer">) {
   return prisma.guess.create({
+    include: {
+      participant: { include: { session: { select: { shortcode: true } } } },
+    },
     data: {
       answer,
       round: { connect: { id: roundId } },
@@ -151,6 +164,16 @@ export async function guess({
 
 export async function endRound(roundId: Round["id"]) {
   return await prisma.round.update({
+    select: {
+      correct: true,
+      id: true,
+      round: true,
+      isActive: true,
+      expiresAt: true,
+      createdAt: true,
+      sessionId: true,
+      session: { select: { shortcode: true } },
+    },
     data: { isActive: false },
     where: { id: roundId },
   });
@@ -181,6 +204,10 @@ export async function scoreRound(id: Round["id"]) {
       id: true,
       round: true,
       isActive: true,
+      expiresAt: true,
+      createdAt: true,
+      sessionId: true,
+      session: { select: { shortcode: true } },
       guesses: {
         select: {
           id: true,
