@@ -12,10 +12,7 @@ function identity<T>(a: T) {
 
 function useHost(): HostContextType;
 function useHost<T>(selector: (ctx: HostContextType) => T): T;
-function useHost<T extends {}>(
-  selector: (ctx: HostContextType) => T,
-  isMulti: boolean
-): T;
+function useHost<T>(selector: (ctx: HostContextType) => T, isMulti: boolean): T;
 function useHost<T>(
   selector: (ctx: HostContextType) => T | HostContextType = identity,
   isMulti: boolean = false

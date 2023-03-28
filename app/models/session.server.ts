@@ -207,7 +207,9 @@ export async function scoreRound(id: Round["id"]) {
       expiresAt: true,
       createdAt: true,
       sessionId: true,
-      session: { select: { shortcode: true } },
+      session: {
+        select: { shortcode: true },
+      },
       guesses: {
         select: {
           id: true,
