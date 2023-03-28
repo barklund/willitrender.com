@@ -10,6 +10,7 @@ export interface GameRound
   guesses?: GameGuess[];
   createdAt: string;
   expiresAt: string;
+  explanation?: string;
 }
 export interface GameSession extends Omit<Session, "gameId" | "createdAt"> {
   participants: GameParticipant[];
@@ -20,6 +21,8 @@ export interface GameSession extends Omit<Session, "gameId" | "createdAt"> {
 
 export interface HostContextType {
   currentRound: GameRound | null;
+  replayRound: GameRound | null;
+  setReplayRound: (round: GameRound) => void;
   roundCount: number;
   rounds: GameRound[];
   participants: GameParticipant[];

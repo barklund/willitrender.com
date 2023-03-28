@@ -6,6 +6,7 @@ import { PusherProvider } from "@harelpls/use-pusher";
 import {
   endRound,
   getHostSession,
+  replayRound,
   scoreRound,
   startRound,
 } from "~/models/session.server";
@@ -52,6 +53,10 @@ export async function action({ params, request }: ActionArgs) {
       const scoredRound = await scoreRound(String(body.get("roundId")));
       await sendRound(scoredRound.session.shortcode, scoredRound);
       return json({ round: scoredRound });
+    case "replay":
+      const replayedRound = await replayRound(String(body.get("roundId")));
+      await sendRound(replayedRound.shortcode, replayedRound);
+      return json({ round: replayedRound });
     default:
       return json({ error: `unknown action: "${action}"` });
   }

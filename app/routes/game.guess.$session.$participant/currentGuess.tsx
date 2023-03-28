@@ -86,24 +86,26 @@ function getSecondsBetween(a: Date, b: Date) {
 export default function CurrentGuess({
   currentRound,
   participant,
+  isDone = false,
 }: {
   participant: GameParticipant;
   currentRound: GameRound | null;
+  isDone?: boolean;
 }) {
-  const [answer, setAnswer] = useState(0);
   const currentGuess = participant.guesses?.find(
     ({ roundId }) => roundId === currentRound?.id
   );
+  const [answer, setAnswer] = useState(currentGuess?.answer || 0);
   useEffect(
     () => void (currentGuess && setAnswer(currentGuess.answer)),
     [currentGuess]
   );
   const lastRoundId = useRef<string>(currentRound?.id || null);
   useEffect(() => {
-    if (lastRoundId.current !== currentRound?.id) {
+    if (lastRoundId.current !== currentRound?.id && !isDone) {
       setAnswer(0);
     }
-  }, [currentRound]);
+  }, [currentRound, isDone]);
   if (!currentRound) {
     return null;
   }

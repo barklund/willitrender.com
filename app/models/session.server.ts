@@ -20,6 +20,7 @@ export function getHostSession(id: Session["id"]) {
             select: { participantId: true, answer: true, roundId: true },
           },
         },
+        orderBy: { round: "asc" },
       },
       participants: {
         select: {
@@ -57,6 +58,7 @@ export async function getParticipantSession({
           createdAt: true,
           expiresAt: true,
         },
+        orderBy: { round: "asc" },
       },
       createdAt: true,
       shortcode: true,
@@ -240,6 +242,44 @@ export async function scoreRound(id: Round["id"]) {
   );
 
   return scoredRound;
+}
+
+export async function replayRound(id: Round["id"]) {
+  const result = await prisma.round.findFirst({
+    select: {
+      correct: true,
+      id: true,
+      round: true,
+      isActive: true,
+      expiresAt: true,
+      createdAt: true,
+      sessionId: true,
+      session: {
+        select: {
+          shortcode: true,
+          game: {
+            select: {
+              exercises: {
+                select: { round: true, correct: true, explanation: true },
+              },
+            },
+          },
+        },
+      },
+    },
+    where: { id },
+  });
+  if (!result) throw "No round";
+  const { session, ...round } = result;
+  const exercise = session.game.exercises.find(
+    (exercise) => round.round === exercise.round
+  );
+  const roundWithExplanation = {
+    ...round,
+    explanation: exercise?.explanation,
+    shortcode: session.shortcode,
+  };
+  return roundWithExplanation;
 }
 
 function calculateScore(answer: number, correct: number, seniority: number) {

@@ -43,10 +43,12 @@ function Rounds({
   rounds,
   roundCount,
   participant,
+  replayRound,
 }: {
   rounds: GameRound[];
   roundCount: number;
   participant: GameParticipant;
+  replayRound?: GameRound;
 }) {
   const guessesByRoundId = Object.fromEntries(
     participant.guesses?.map(({ roundId, answer }) => [roundId, answer]) || []
@@ -58,7 +60,9 @@ function Rounds({
           key={roundNo}
           className={`flex flex-grow flex-col border ${
             rounds[roundNo]
-              ? rounds[roundNo].isActive || rounds[roundNo].correct === null
+              ? rounds[roundNo].isActive ||
+                rounds[roundNo].correct === null ||
+                (replayRound && replayRound.id === rounds[roundNo].id)
                 ? "bg-gray-900 text-white"
                 : "bg-gray-300"
               : "bg-gray-300 text-gray-500"

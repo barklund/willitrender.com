@@ -22,6 +22,7 @@ function HostProvider({
   const [participants, setParticipants] = useState(session.participants);
   const [rounds, setRounds] = useState(session.rounds);
   const [currentRound, setCurrentRound] = useState<GameRound | null>(null);
+  const [replayRound, setReplayRound] = useState<GameRound | null>(null);
   const channel = useChannel(session.shortcode);
 
   const handleJoin = useCallback((message?: { data: GameParticipant }) => {
@@ -63,6 +64,8 @@ function HostProvider({
     currentRound,
     session: session,
     roundCount: session.game.rounds,
+    replayRound,
+    setReplayRound,
   };
   return <HostContext.Provider value={value}>{children}</HostContext.Provider>;
 }

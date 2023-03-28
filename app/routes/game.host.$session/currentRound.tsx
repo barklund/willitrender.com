@@ -9,12 +9,16 @@ interface Node {
 }
 
 function CurrentRound() {
-  const rounds = useHost(({ rounds }) => rounds);
+  const { rounds, replayRound } = useHost(
+    ({ rounds, replayRound }) => ({ rounds, replayRound }),
+    true
+  );
   const [activeNode, setActiveNode] = useState<Node | null>(null);
-  const lastRound = rounds[rounds.length - 1];
-  if (!lastRound || lastRound.correct !== null) return null;
+  const lastRound = replayRound || rounds[rounds.length - 1];
+  const isReplay = replayRound !== null;
+  if (!isReplay && (!lastRound || lastRound.correct !== null)) return null;
   const repo = `render-champion-${lastRound.round.toFixed(0).padStart(2, "0")}`;
-  if (lastRound.isActive) {
+  if (lastRound.isActive || isReplay) {
     return (
       <div className="flex w-full max-w-full flex-grow items-stretch overflow-hidden">
         <div className="w-[300px] overflow-auto border-r-2 text-sm">

@@ -26,6 +26,7 @@ export default function GuessProvider({
     const lastRound = rounds[rounds.length - 1];
     return lastRound?.isActive ? lastRound : null;
   });
+  const [replayRound, setReplayRound] = useState<GameRound | null>(null);
   const handleRoundUpdate = useCallback((message?: { data: GameRound }) => {
     if (message) {
       const latestRound = message.data;
@@ -34,10 +35,10 @@ export default function GuessProvider({
           ? latestRound
           : null
       );
-      setGameRounds((list) => [
-        ...list.filter(({ id }) => id !== latestRound.id),
-        latestRound,
-      ]);
+      setReplayRound(latestRound.explanation ? latestRound : null);
+      setGameRounds((list) =>
+        list.map((round) => (round.id !== latestRound.id ? round : latestRound))
+      );
     }
   }, []);
   const channel = useChannel(session.shortcode);
@@ -51,12 +52,17 @@ export default function GuessProvider({
         participant={participant}
         rounds={gameRounds}
         roundCount={session.game.rounds}
+        replayRound={replayRound || undefined}
       />
-      {!currentRound && (
+      {!currentRound && !replayRound && (
         <h2 className="text-4xl">Please wait for next round...</h2>
       )}
-      <Browser currentRound={currentRound} />
-      <CurrentGuess participant={participant} currentRound={currentRound} />
+      <Browser currentRound={replayRound || currentRound} />
+      <CurrentGuess
+        participant={participant}
+        currentRound={replayRound || currentRound}
+        isDone={!!replayRound}
+      />
     </main>
   );
 }

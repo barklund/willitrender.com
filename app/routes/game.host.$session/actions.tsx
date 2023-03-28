@@ -55,12 +55,20 @@ function getSecondsBetween(a: Date, b: Date) {
 }
 
 function Actions() {
-  const { rounds, currentRound } = useHost(
-    ({ rounds, currentRound }) => ({ rounds, currentRound }),
+  const { rounds, currentRound, roundCount, replayRound } = useHost(
+    ({ rounds, currentRound, roundCount, replayRound }) => ({
+      rounds,
+      currentRound,
+      roundCount,
+      replayRound,
+    }),
     true
   );
   const lastRound = rounds[rounds.length - 1];
   const isLastRoundScored = !rounds.length || lastRound.correct !== null;
+  const isGameDone =
+    rounds.length === roundCount && rounds[roundCount - 1].correct !== null;
+  if (replayRound) return null;
   return (
     <Form method="post" className="flex flex-col gap-2 px-4">
       {currentRound ? (
@@ -70,12 +78,16 @@ function Actions() {
           <Countdown currentRound={currentRound} />
         </>
       ) : isLastRoundScored ? (
-        <>
-          <input type="hidden" name="action" value="start" />
-          <button className="border p-2 text-3xl uppercase">
-            Round {rounds.length + 1}
-          </button>
-        </>
+        isGameDone ? (
+          <h2 className="text-center text-5xl">Game over!</h2>
+        ) : (
+          <>
+            <input type="hidden" name="action" value="start" />
+            <button className="border p-2 text-3xl uppercase">
+              Round {rounds.length + 1}
+            </button>
+          </>
+        )
       ) : (
         <>
           <input type="hidden" name="action" value="score" />
