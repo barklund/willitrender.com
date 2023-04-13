@@ -1,10 +1,12 @@
 import { PusherProvider } from "@harelpls/use-pusher";
 import { useLoaderData } from "@remix-run/react";
-import type { ActionArgs, LoaderArgs } from "@remix-run/server-runtime";
+import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/server-runtime";
 import { redirect, json } from "@remix-run/server-runtime";
 import { getParticipantSession, guess } from "~/models/session.server";
 import { sendGuess } from "~/services/pusher.server";
 import GuessProvider from "./guessProvider";
+
+export const meta: V2_MetaFunction = () => [{ title: "Guessing - Will it render?" }];
 
 export function links() {
   return [

@@ -1,8 +1,10 @@
 import { Form, useLoaderData } from "@remix-run/react";
-import type { ActionArgs } from "@remix-run/server-runtime";
+import type { ActionArgs, V2_MetaFunction } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { getGames, startGame } from "~/models/game.server";
+
+export const meta: V2_MetaFunction = () => [{ title: "Starting - Will it render?" }];
 
 export async function loader() {
   const games = await getGames();

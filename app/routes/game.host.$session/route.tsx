@@ -1,5 +1,5 @@
 import { useLoaderData } from "@remix-run/react";
-import type { ActionArgs, LoaderArgs } from "@remix-run/server-runtime";
+import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { PusherProvider } from "@harelpls/use-pusher";
 
@@ -18,6 +18,8 @@ import HostProvider from "./hostProvider";
 import Participants from "./participants";
 import Rounds from "./rounds";
 import { sendRound } from "~/services/pusher.server";
+
+export const meta: V2_MetaFunction = () => [{ title: "Hosting - Will it render?" }];
 
 export function links() {
   return [

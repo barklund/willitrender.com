@@ -1,5 +1,5 @@
 import { Form, useLoaderData } from "@remix-run/react";
-import type { ActionArgs } from "@remix-run/server-runtime";
+import type { ActionArgs, V2_MetaFunction } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { joinSession } from "~/models/session.server";
@@ -73,6 +73,8 @@ const EMOJIS = [
   { emoji: "🍍", name: "Pineapple" },
   { emoji: "🍔", name: "Hamburger" },
 ];
+
+export const meta: V2_MetaFunction = () => [{ title: "Joining - Will it render?" }];
 
 export async function loader() {
   const random = EMOJIS.slice().sort(() => Math.random() - 0.5);
