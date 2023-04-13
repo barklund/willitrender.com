@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import ReactConfetti from "react-confetti";
 import useHost from "./useHost";
 
-const WINNERS = 3;
+const WINNERS = 6;
 
 function shuffle<T>(array: T[]): T[] {
   let currentIndex = array.length,
