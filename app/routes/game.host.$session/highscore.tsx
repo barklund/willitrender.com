@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ReactConfetti from "react-confetti";
 import type { GameParticipant } from "~/models/types.client";
 import useHost from "./useHost";
 
@@ -10,11 +11,31 @@ const SENIORITY_LABEL = {
 
 function Entry({
   participant: { emoji, nickname, seniority, score },
+  position,
+  isGameOver,
 }: {
   participant: GameParticipant;
+  position: number;
+  isGameOver: boolean;
 }) {
+  const color = isGameOver
+    ? (() => {
+        switch (position) {
+          case 0:
+            return "bg-[#AF9500] text-white";
+          case 1:
+            return "bg-[#B4B4B4] text-white";
+          case 2:
+            return "bg-[#AD8A56] text-white";
+          default:
+            return "";
+        }
+      })()
+    : "";
   return (
-    <div className="flex items-center gap-2 border border-0 border-b-2 py-1">
+    <div
+      className={`flex items-center gap-2 border border-0 border-b-2 p-1 ${color}`}
+    >
       <span className="text-2xl">
         {emoji} {nickname}
       </span>
@@ -30,7 +51,16 @@ function Entry({
 
 function Highscore() {
   const [isVisible, setIsVisible] = useState(false);
-  const participants = useHost(({ participants }) => participants);
+  const { participants, rounds, roundCount } = useHost(
+    ({ participants, rounds, roundCount }) => ({
+      participants,
+      rounds,
+      roundCount,
+    }),
+    true
+  );
+  const isGameOver =
+    rounds.length === roundCount && typeof window !== "undefined";
   const ranking = participants.slice();
   ranking.sort((a, b) => b.score - a.score);
   const overlayStyle = isVisible
@@ -52,11 +82,22 @@ function Highscore() {
           className="flex h-1/2 w-1/2 flex-col items-stretch overflow-auto bg-white p-12"
           onClick={(e) => e.stopPropagation()}
         >
+          {isGameOver && (
+            <ReactConfetti
+              width={window?.innerWidth}
+              height={window?.innerHeight}
+            />
+          )}
           <h2 className="border border-0 border-b-2 pb-4 text-5xl">
             Highscore
           </h2>
-          {ranking.map((participant) => (
-            <Entry key={participant.id} participant={participant} />
+          {ranking.map((participant, pos) => (
+            <Entry
+              key={participant.id}
+              participant={participant}
+              position={pos}
+              isGameOver={isGameOver}
+            />
           ))}
         </div>
       </div>

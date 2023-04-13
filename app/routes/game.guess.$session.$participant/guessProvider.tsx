@@ -46,6 +46,8 @@ export default function GuessProvider({
 
   useEffect(() => setGameRounds(rounds), [rounds]);
 
+  const gameOver = rounds.length === session.game.rounds;
+
   return (
     <main className="flex h-full flex-col items-stretch md:items-center gap-2 md:gap-4">
       <Rounds
@@ -55,7 +57,7 @@ export default function GuessProvider({
         replayRound={replayRound || undefined}
       />
       {!currentRound && !replayRound && (
-        <h2 className="text-4xl">Please wait for next round...</h2>
+        <h2 className="text-2xl md:text-4xl flex-grow flex items-center justify-center">{gameOver ? 'Game over!' : 'Please wait for next round...'}</h2>
       )}
       <Browser currentRound={replayRound || currentRound} />
       <CurrentGuess
