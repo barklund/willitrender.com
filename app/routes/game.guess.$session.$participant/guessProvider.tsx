@@ -36,9 +36,14 @@ export default function GuessProvider({
           : null
       );
       setReplayRound(latestRound.explanation ? latestRound : null);
-      setGameRounds((list) =>
-        list.map((round) => (round.id !== latestRound.id ? round : latestRound))
-      );
+      setGameRounds((list) => {
+        if (list.some(({ id }) => id === latestRound.id)) {
+          return list.map((round) =>
+            round.id !== latestRound.id ? round : latestRound
+          );
+        }
+        return list.concat([latestRound]);
+      });
     }
   }, []);
   const channel = useChannel(session.shortcode);
@@ -46,10 +51,11 @@ export default function GuessProvider({
 
   useEffect(() => setGameRounds(rounds), [rounds]);
 
-  const gameOver = rounds.length === session.game.rounds;
+  console.log("what are numbers?", gameRounds.length, session.game.rounds);
+  const gameOver = gameRounds.length >= session.game.rounds;
 
   return (
-    <main className="flex h-full flex-col items-stretch gap-2 md:items-center md:gap-4 bg-[#efefef]">
+    <main className="flex h-full flex-col items-stretch gap-2 bg-[#efefef] md:items-center md:gap-4">
       <Rounds
         participant={participant}
         rounds={gameRounds}
@@ -63,7 +69,9 @@ export default function GuessProvider({
           </h2>
           {gameOver && (
             <>
-              <p>Feedback: <a
+              <p>
+                Feedback:{" "}
+                <a
                   href="https://form.jotform.com/morten.barklund/render-cphreact"
                   target="_blank"
                   rel="noreferrer"
