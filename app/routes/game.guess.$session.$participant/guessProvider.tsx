@@ -49,7 +49,7 @@ export default function GuessProvider({
   const gameOver = rounds.length === session.game.rounds;
 
   return (
-    <main className="flex h-full flex-col items-stretch md:items-center gap-2 md:gap-4">
+    <main className="flex h-full flex-col items-stretch gap-2 md:items-center md:gap-4 bg-[#efefef]">
       <Rounds
         participant={participant}
         rounds={gameRounds}
@@ -57,7 +57,78 @@ export default function GuessProvider({
         replayRound={replayRound || undefined}
       />
       {!currentRound && !replayRound && (
-        <h2 className="text-2xl md:text-4xl flex-grow flex items-center justify-center">{gameOver ? 'Game over!' : 'Please wait for next round...'}</h2>
+        <div className="flex flex-grow flex-col items-center justify-center gap-6">
+          <h2 className="text-2xl md:text-4xl">
+            {gameOver ? "Game over!" : "Please wait for next round..."}
+          </h2>
+          {gameOver && (
+            <>
+              <p>Feedback: <a
+                  href="https://form.jotform.com/morten.barklund/render-cphreact"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-blue-500 underline"
+                >
+                  Please fill this form
+                </a>
+              </p>
+              <p>
+                Twitter:{" "}
+                <a
+                  href="https://twitter.com/barklund"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-blue-500 underline"
+                >
+                  @barklund
+                </a>
+              </p>
+              <p>
+                LinkedIn:{" "}
+                <a
+                  href="https://linkedin.com/in/barklund"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-blue-500 underline"
+                >
+                  barklund
+                </a>
+              </p>
+              <div className="flex items-end gap-6">
+                <div className="flex flex-col items-center gap-4">
+                  <img
+                    src="/books/rq2e_cover.jpeg"
+                    className="max-w-[20vw]"
+                    alt=""
+                  />
+                  <a
+                    href="https://reactquickly.dev"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-blue-500 underline"
+                  >
+                    React Quickly
+                  </a>
+                </div>
+                <div className="flex flex-col items-center gap-4">
+                  <img
+                    src="/books/jrr_cover.png"
+                    className="max-w-[20vw]"
+                    alt=""
+                  />
+                  <a
+                    href="https://reactlikea.pro"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-blue-500 underline"
+                  >
+                    Job-Ready React
+                  </a>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       )}
       <Browser currentRound={replayRound || currentRound} />
       <CurrentGuess
