@@ -47,7 +47,7 @@ export default function GuessProvider({
   useEffect(() => setGameRounds(rounds), [rounds]);
 
   return (
-    <main className="flex h-full flex-col items-center gap-4">
+    <main className="flex h-full flex-col items-stretch md:items-center gap-2 md:gap-4">
       <Rounds
         participant={participant}
         rounds={gameRounds}

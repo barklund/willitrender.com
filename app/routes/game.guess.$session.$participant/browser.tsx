@@ -16,14 +16,14 @@ function Browser({ currentRound }: { currentRound: GameRound | null }) {
     .padStart(2, "0")}`;
   return (
     <div className="flex w-full max-w-full flex-grow items-stretch overflow-hidden">
-      <div className="w-[300px] overflow-auto border-r-2 text-sm">
+      <div className="w-[100px] md:w-[300px] overflow-auto border-r-2 text-xs md:text-sm">
         <FileTree
           zip={`/zips/${repo}.zip`}
           onClick={(node: Node) => void setActiveNode(node)}
           defaultSelected="src/App.js"
         />
       </div>
-      <div className="w-max-full h-full w-full overflow-auto">
+      <div className="w-max-full h-full w-full overflow-auto text-[10px] md:text-md">
         {activeNode && (
           <Highlight
             content={activeNode.content}

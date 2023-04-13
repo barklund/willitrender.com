@@ -96,11 +96,17 @@ export async function joinSession({
     where: { shortcode },
   });
   if (!session) throw "Bad shortcode";
+  const score = (() => { switch(seniority) {
+    case 1: return 1000;
+    case 2: return 500;
+    case 3: return 0;
+  }})();
   return prisma.participant.create({
     data: {
       nickname,
       emoji,
       seniority,
+      score,
       session: { connect: { id: session.id } },
     },
     include: {
@@ -216,7 +222,7 @@ export async function scoreRound(id: Round["id"]) {
         select: {
           id: true,
           answer: true,
-          participant: { select: { id: true, seniority: true } },
+          participant: { select: { id: true } },
         },
       },
     },
@@ -229,7 +235,7 @@ export async function scoreRound(id: Round["id"]) {
     increment: Participant["score"];
   }[] = scoredRound.guesses.map(({ participant, answer }) => ({
     id: participant.id,
-    increment: calculateScore(answer, exercise.correct, participant.seniority),
+    increment: calculateScore(answer, exercise.correct),
   }));
 
   await Promise.all(
@@ -282,9 +288,9 @@ export async function replayRound(id: Round["id"]) {
   return roundWithExplanation;
 }
 
-function calculateScore(answer: number, correct: number, seniority: number) {
+function calculateScore(answer: number, correct: number) {
   const correctBits = ~(answer ^ correct) & 15;
-  const factor = seniority <= 1 ? 30 : seniority === 2 ? 25 : 20;
+  const factor = 100;
   return countSetBits(correctBits) * factor;
 }
 

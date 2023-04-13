@@ -18,7 +18,7 @@ function Toggle({
   const color = answer & bit ? "bg-green-800 text-white" : "";
   return (
     <button
-      className={`flex-grow border p-8 text-4xl ${color}`}
+      className={`flex-grow border p-4 md:p-8 text-2xl md:text-4xl ${color}`}
       onClick={() => onFlip(bit)}
     >
       {children}
@@ -56,16 +56,14 @@ function Countdown({ currentRound, ...rest }: CountdownProps) {
   }, []);
   const relativeLeft = timeLeft / timeOrig;
   const color =
-    timeLeft < 5000 && timeLeft % 400 > 200 ? "bg-red-400" : "bg-green-400";
+    timeLeft < 5000 && timeLeft % 400 > 200 ? "bg-red-700" : "bg-green-700";
   return (
-    <div className="relative flex border p-2">
+    <div className={`relative flex border ${disabled ? "text-gray-300" : "text-white bg-black"}`}>
       <button
-        className={`relative z-10 flex-grow text-xl uppercase ${
-          disabled ? "text-gray-300" : ""
-        }`}
+        className="relative z-10 flex-grow md:text-xl uppercase p-2"
         {...rest}
       >
-        Submit {!disabled && formatSeconds(timeLeft / 1000)}
+        {disabled ? 'Submission closed' : `Submit (time left: ${formatSeconds(timeLeft / 1000)})`}
       </button>
       {!disabled && (
         <div
@@ -112,8 +110,8 @@ export default function CurrentGuess({
   const flip = (bit: number) => setAnswer((v) => v ^ bit);
   const canGuess = currentRound?.isActive && !currentGuess;
   return (
-    <div className="m-8 flex w-[600px] flex-col gap-4">
-      <div className="flex gap-4">
+    <div className="m-2 md:m-8 flex md:w-[600px] flex-col gap-2 md:gap-4 items-stretch">
+      <div className="flex gap-2 md:gap-4">
         <Toggle answer={answer} bit={8} onFlip={flip}>
           A
         </Toggle>

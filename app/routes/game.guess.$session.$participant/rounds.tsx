@@ -6,7 +6,7 @@ function range(n: number) {
 
 function Bit({ bit }: { bit: number }) {
   const color = bit ? "bg-green-900" : "bg-white";
-  return <li className={`flex-grow border border-gray-200 ${color}`}> </li>;
+  return <li className={`flex-grow md:border md:border-gray-200 ${color}`}> </li>;
 }
 
 function Answer({
