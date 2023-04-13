@@ -27,6 +27,7 @@ export function getHostSession(id: Session["id"]) {
           id: true,
           emoji: true,
           nickname: true,
+          email: true,
           score: true,
           seniority: true,
         },
@@ -68,6 +69,7 @@ export async function getParticipantSession({
           id: true,
           nickname: true,
           emoji: true,
+          email: true,
           seniority: true,
           score: true,
           guesses: true,
@@ -86,9 +88,10 @@ export async function getParticipantSession({
 export async function joinSession({
   nickname,
   emoji,
+  email,
   seniority,
   shortcode,
-}: Pick<Participant, "nickname" | "emoji" | "seniority"> & {
+}: Pick<Participant, "nickname" | "email" | "emoji" | "seniority"> & {
   shortcode: Session["shortcode"];
 }) {
   const session = await prisma.session.findFirst({
@@ -105,6 +108,7 @@ export async function joinSession({
     data: {
       nickname,
       emoji,
+      email,
       seniority,
       score,
       session: { connect: { id: session.id } },

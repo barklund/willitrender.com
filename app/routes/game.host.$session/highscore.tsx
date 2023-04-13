@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactConfetti from "react-confetti";
 import type { GameParticipant } from "~/models/types.client";
 import useHost from "./useHost";
@@ -51,6 +51,8 @@ function Entry({
 
 function Highscore() {
   const [isVisible, setIsVisible] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+  useEffect(() => void setIsActive(typeof window !== "undefined"), []);
   const { participants, rounds, roundCount } = useHost(
     ({ participants, rounds, roundCount }) => ({
       participants,
@@ -74,33 +76,35 @@ function Highscore() {
       >
         🥇
       </button>
-      <div
-        className={`absolute inset-0 flex items-center justify-center bg-gray-600/80 transition-all duration-500 ${overlayStyle}`}
-        onClick={() => setIsVisible(false)}
-      >
+      {isActive && (
         <div
-          className="flex h-1/2 w-1/2 flex-col items-stretch overflow-auto bg-white p-12"
-          onClick={(e) => e.stopPropagation()}
+          className={`absolute inset-0 flex items-center justify-center bg-gray-600/80 transition-all duration-500 ${overlayStyle}`}
+          onClick={() => setIsVisible(false)}
         >
-          {isGameOver && (
-            <ReactConfetti
-              width={window?.innerWidth}
-              height={window?.innerHeight}
-            />
-          )}
-          <h2 className="border border-0 border-b-2 pb-4 text-5xl">
-            Highscore
-          </h2>
-          {ranking.map((participant, pos) => (
-            <Entry
-              key={participant.id}
-              participant={participant}
-              position={pos}
-              isGameOver={isGameOver}
-            />
-          ))}
+          <div
+            className="flex h-1/2 w-1/2 flex-col items-stretch overflow-auto bg-white p-12"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {isGameOver &&  (
+              <ReactConfetti
+                width={window?.innerWidth}
+                height={window?.innerHeight}
+              />
+            )}
+            <h2 className="border border-0 border-b-2 pb-4 text-5xl">
+              Highscore
+            </h2>
+            {ranking.map((participant, pos) => (
+              <Entry
+                key={participant.id}
+                participant={participant}
+                position={pos}
+                isGameOver={isGameOver}
+              />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

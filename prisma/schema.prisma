@@ -65,7 +65,8 @@ model Participant {
   nickname  String
   emoji     String
   seniority Int
-  score     Int    @default(0)
+  score     Int     @default(0)
+  email     String?
 
   session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   sessionId String

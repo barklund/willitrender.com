@@ -18,6 +18,7 @@ import HostProvider from "./hostProvider";
 import Participants from "./participants";
 import Rounds from "./rounds";
 import { sendRound } from "~/services/pusher.server";
+import PrizeDraw from "./prizeDraw";
 
 export const meta: V2_MetaFunction = () => [{ title: "Hosting - Will it render?" }];
 
@@ -76,6 +77,7 @@ export default function Host() {
         <main className="flex h-full w-full flex-col justify-between gap-4">
           <Rounds />
           <Highscore />
+          <PrizeDraw />
           <BetweenRounds />
           <CurrentRound />
           <Actions />

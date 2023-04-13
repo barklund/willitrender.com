@@ -9,6 +9,7 @@ export async function action({ request }: ActionArgs) {
   const body = await request.formData();
   const shortcode = body.get("shortcode");
   const nickname = body.get("nickname");
+  const email = String(body.get("email"));
   const seniority = parseInt(String(body.get("seniority")) || "");
   const emoji = body.get("emoji") || body.get("custom-emoji");
   if (
@@ -22,6 +23,7 @@ export async function action({ request }: ActionArgs) {
   const participant = await joinSession({
     emoji,
     nickname,
+    email,
     seniority,
     shortcode,
   });
@@ -85,10 +87,10 @@ export async function loader() {
 export default function Join() {
   const { emojis } = useLoaderData<typeof loader>();
   return (
-    <>
+    <main className="m-2 md:my-12 flex items-center flex-col">
       <Form
         method="post"
-        className="mx-auto my-12 flex w-1/2 flex-col gap-4 border border-purple-400 p-4 "
+        className="flex items-stretch md:w-1/2 flex-col gap-4 border border-purple-400 p-4 text-sm md:text-lg"
       >
         <label className="flex flex-col gap-2">
           Session code:
@@ -99,6 +101,12 @@ export default function Join() {
             Nickname <small>(max 8 characters)</small>:
           </span>
           <input className="w-40 border px-1" name="nickname" maxLength={8} />
+        </label>
+        <label className="flex flex-col gap-2">
+          <span>
+            Email <small>(optional, but required to win a prize)</small>:
+          </span>
+          <input className="w-80 border px-1" name="email" type="email" />
         </label>
         <div className="flex flex-col gap-2">
           <span>
@@ -136,6 +144,6 @@ export default function Join() {
         </div>
         <button className="bg-purple-500 py-2 text-white">Start</button>
       </Form>
-    </>
+    </main>
   );
 }
