@@ -23,7 +23,7 @@ function Browser({ currentRound }: { currentRound: GameRound | null }) {
           defaultSelected="src/App.js"
         />
       </div>
-      <div className="w-max-full h-full w-full overflow-auto text-[10px] md:text-md">
+      <div className="w-max-full h-full w-full overflow-auto text-[10px] md:text-[14px]">
         {activeNode && (
           <Highlight
             content={activeNode.content}

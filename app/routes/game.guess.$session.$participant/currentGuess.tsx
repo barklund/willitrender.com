@@ -15,7 +15,7 @@ function Toggle({
   bit: number;
   onFlip: (bit: number) => void;
 }>) {
-  const color = answer & bit ? "bg-green-800 text-white" : "";
+  const color = answer & bit ? "bg-green-800 text-white" : "bg-white";
   return (
     <button
       className={`flex-grow border p-4 md:p-8 text-2xl md:text-4xl ${color}`}
